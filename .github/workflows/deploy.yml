@@ -41,14 +41,15 @@ jobs:
             sudo rm -f /opt/ac-shop/ac-shop-backend.tar.gz
 
       - name: Copy image to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_PORT }}
-          source: "ac-shop-backend.tar.gz"
-          target: "/home/ec2-user"
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          scp -i /tmp/deploy_key \
+              -P ${{ secrets.EC2_PORT }} \
+              -o StrictHostKeyChecking=no \
+              ac-shop-backend.tar.gz \
+              ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/
+          rm -f /tmp/deploy_key
 
       - name: Deploy on EC2
         uses: appleboy/ssh-action@v1.0.3
