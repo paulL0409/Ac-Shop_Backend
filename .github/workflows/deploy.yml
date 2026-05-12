@@ -37,7 +37,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            rm -f ~/ac-shop-backend.tar.gz
+            rm -f /tmp/ac-shop-backend.tar.gz
             sudo rm -f /opt/ac-shop/ac-shop-backend.tar.gz
             docker system prune -f || true
 
@@ -49,7 +49,7 @@ jobs:
               -P ${{ secrets.EC2_PORT }} \
               -o StrictHostKeyChecking=no \
               ac-shop-backend.tar.gz \
-              ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/ac-shop-backend.tar.gz
+              ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/ac-shop-backend.tar.gz
           rm -f /tmp/deploy_key
 
       - name: Deploy on EC2
@@ -61,7 +61,7 @@ jobs:
           port: ${{ secrets.EC2_PORT }}
           script: |
             sudo mkdir -p /opt/ac-shop
-            sudo mv ~/ac-shop-backend.tar.gz /opt/ac-shop/ac-shop-backend.tar.gz
+            sudo mv /tmp/ac-shop-backend.tar.gz /opt/ac-shop/ac-shop-backend.tar.gz
             gunzip -c /opt/ac-shop/ac-shop-backend.tar.gz | sudo docker load
             sudo docker rm -f ac-shop-backend || true
             sudo docker run -d \
