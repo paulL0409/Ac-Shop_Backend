@@ -27,7 +27,7 @@ A full-stack e-commerce application with role-based access (Customer, Shop Owner
     DB_PASSWORD=your_password
     STRIPE_SECRET_KEY=your_stripe_secret
     STRIPE_WEBHOOK_SECRET=your_webhook_secret
-
+    export $(grep -v '^#' .env | xargs)    
 ### Let webhook listen to stripe
 
     stripe listen --forward-to localhost:8080/payments/webhook
