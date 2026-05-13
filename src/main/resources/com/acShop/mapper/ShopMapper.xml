@@ -17,6 +17,12 @@
             #{id}
         </foreach>
     </delete>
+    <delete id="deleteByOwnerIds">
+        delete from shop where owner_id in
+        <foreach collection="ownerIds" item="ownerId" separator="," open="(" close=")">
+            #{ownerId}
+        </foreach>
+    </delete>
     <update id="update">
         update shop
         <set>

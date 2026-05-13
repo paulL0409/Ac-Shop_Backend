@@ -16,6 +16,8 @@ public interface ShopMapper {
 
     void delete(List<Integer> ids);
 
+    void deleteByOwnerIds(List<Integer> ownerIds);
+
     @Insert("insert into shop(owner_id, name, create_time, description, image_url)"+
             " values(#{ownerId}, #{name}, #{createTime}, #{description}, #{imageUrl})")
     void add(Shop shop);
