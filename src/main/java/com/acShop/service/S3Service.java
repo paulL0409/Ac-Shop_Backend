@@ -53,4 +53,17 @@ public class S3Service {
                 + ".s3." + props.getRegion()
                 + ".amazonaws.com/" + key;
     }
+
+    public String uploadImageBytes(byte[] data, String ext) {
+        String key = "images/" + UUID.randomUUID() + ext;
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(props.getBucketName())
+                .key(key)
+                .contentType("image/jpeg")
+                .build();
+        s3Client.putObject(request, RequestBody.fromBytes(data));
+        return "https://" + props.getBucketName()
+                + ".s3." + props.getRegion()
+                + ".amazonaws.com/" + key;
+    }
 }

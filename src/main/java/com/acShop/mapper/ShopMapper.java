@@ -4,6 +4,7 @@ import com.acShop.pojo.Shop;
 import com.acShop.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ public interface ShopMapper {
 
     @Insert("insert into shop(owner_id, name, create_time, description, image_url)"+
             " values(#{ownerId}, #{name}, #{createTime}, #{description}, #{imageUrl})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void add(Shop shop);
 
     void update(Shop shop);

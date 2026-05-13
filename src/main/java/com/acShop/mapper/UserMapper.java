@@ -3,6 +3,7 @@ package com.acShop.mapper;
 import com.acShop.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -16,6 +17,7 @@ public interface UserMapper {
 
     @Insert("insert into user(username, user_password, role, create_time)"+
             " values(#{username}, #{userPassword}, #{role}, #{createTime})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void add(User user);
 
     void update(User user);
