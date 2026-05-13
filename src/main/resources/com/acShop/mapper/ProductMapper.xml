@@ -23,6 +23,12 @@
             #{id}
         </foreach>
     </delete>
+    <delete id="deleteByShopIds">
+        delete from product where shop_id in
+        <foreach collection="shopIds" item="shopId" separator="," open="(" close=")">
+            #{shopId}
+        </foreach>
+    </delete>
     <update id="update">
         update product
         <set>

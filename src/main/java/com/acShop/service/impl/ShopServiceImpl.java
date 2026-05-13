@@ -1,5 +1,6 @@
 package com.acShop.service.impl;
 
+import com.acShop.mapper.ProductMapper;
 import com.acShop.mapper.ShopMapper;
 import com.acShop.pojo.PageBean;
 import com.acShop.pojo.Result;
@@ -18,6 +19,8 @@ import java.util.List;
 public class ShopServiceImpl implements ShopService {
     @Autowired
     private ShopMapper shopMapper;
+    @Autowired
+    private ProductMapper productMapper;
 
     @Override
     public PageBean page(Integer page, Integer pageSize, String name) {
@@ -30,6 +33,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public void delete(List<Integer> ids) {
+        productMapper.deleteByShopIds(ids);
         shopMapper.delete(ids);
     }
 

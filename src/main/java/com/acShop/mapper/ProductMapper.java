@@ -14,6 +14,8 @@ public interface ProductMapper {
 
     void delete(List<Integer> ids);
 
+    void deleteByShopIds(List<Integer> shopIds);
+
     @Insert("insert into product(shop_id, name, description, price, image_url, create_time)"+
             " values(#{shopId}, #{name}, #{description}, #{price}, #{imageUrl}, #{createTime})")
     void add(Product product);
