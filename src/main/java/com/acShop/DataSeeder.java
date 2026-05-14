@@ -208,6 +208,10 @@ public class DataSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        if (userMapper.findUserByName(new User(null, "admin", null, null, null)) != null) {
+            System.out.println("Already seeded, skipping.");
+            return;
+        }
         createUser("admin",     "Admin1234!",    "Admin");
         createUser("customer1", "Customer1234!", "Customer");
         createUser("customer2", "Customer1234!", "Customer");
