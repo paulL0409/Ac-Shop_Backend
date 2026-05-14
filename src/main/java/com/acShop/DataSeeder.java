@@ -20,6 +20,11 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Component
 @Profile("seed")
@@ -212,12 +217,31 @@ public class DataSeeder implements ApplicationRunner {
             System.out.println("Already seeded, skipping.");
             return;
         }
+
+        System.out.println("Uploading 160 images in parallel...");
+        ExecutorService pool = Executors.newFixedThreadPool(20);
+
+        List<Future<String>> shopImgFutures = new ArrayList<>();
+        List<List<Future<String>>> productImgFutures = new ArrayList<>();
+
+        for (Object[] ignored : SHOPS) {
+            shopImgFutures.add(pool.submit(() -> uploadPlaceholder(800, 600)));
+            List<Future<String>> pf = new ArrayList<>();
+            for (int j = 0; j < 15; j++) {
+                pf.add(pool.submit(() -> uploadPlaceholder(400, 400)));
+            }
+            productImgFutures.add(pf);
+        }
+        pool.shutdown();
+
+        System.out.println("Inserting records...");
         createUser("admin",     "Admin1234!",    "Admin");
         createUser("customer1", "Customer1234!", "Customer");
         createUser("customer2", "Customer1234!", "Customer");
         createUser("customer3", "Customer1234!", "Customer");
 
-        for (Object[] shopDef : SHOPS) {
+        for (int i = 0; i < SHOPS.length; i++) {
+            Object[] shopDef = SHOPS[i];
             String shopName  = (String) shopDef[0];
             String shopDesc  = (String) shopDef[1];
             String ownerName = (String) shopDef[2];
@@ -226,15 +250,14 @@ public class DataSeeder implements ApplicationRunner {
             User owner = new User(null, ownerName, encoder.encode("Owner1234!"), "ShopOwner", LocalDateTime.now());
             userMapper.add(owner);
 
-            String shopImage = uploadPlaceholder(800, 600);
-            Shop shop = new Shop(null, owner.getId(), shopName, LocalDateTime.now(), shopDesc, shopImage);
+            Shop shop = new Shop(null, owner.getId(), shopName, LocalDateTime.now(), shopDesc, shopImgFutures.get(i).get());
             shopMapper.add(shop);
 
-            for (String[] p : products) {
-                String productImage = uploadPlaceholder(400, 400);
+            for (int j = 0; j < products.length; j++) {
+                String[] p = products[j];
                 productMapper.add(new Product(
                         null, shop.getId(), p[0], p[1],
-                        new BigDecimal(p[2]), productImage, LocalDateTime.now()));
+                        new BigDecimal(p[2]), productImgFutures.get(i).get(j).get(), LocalDateTime.now()));
             }
             System.out.println("Seeded shop: " + shopName);
         }
