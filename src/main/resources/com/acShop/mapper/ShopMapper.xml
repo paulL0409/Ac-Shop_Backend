@@ -23,6 +23,12 @@
             #{ownerId}
         </foreach>
     </delete>
+    <select id="getIdsByOwnerIds" resultType="java.lang.Integer">
+        select id from shop where owner_id in
+        <foreach collection="ownerIds" item="ownerId" separator="," open="(" close=")">
+            #{ownerId}
+        </foreach>
+    </select>
     <update id="update">
         update shop
         <set>

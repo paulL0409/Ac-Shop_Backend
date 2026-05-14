@@ -19,6 +19,8 @@ public interface ShopMapper {
 
     void deleteByOwnerIds(List<Integer> ownerIds);
 
+    List<Integer> getIdsByOwnerIds(List<Integer> ownerIds);
+
     @Insert("insert into shop(owner_id, name, create_time, description, image_url)"+
             " values(#{ownerId}, #{name}, #{createTime}, #{description}, #{imageUrl})")
     @Options(useGeneratedKeys = true, keyProperty = "id")

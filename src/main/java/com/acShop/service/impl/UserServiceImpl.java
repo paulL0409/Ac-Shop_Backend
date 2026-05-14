@@ -1,5 +1,6 @@
 package com.acShop.service.impl;
 
+import com.acShop.mapper.ProductMapper;
 import com.acShop.mapper.ShopMapper;
 import com.acShop.mapper.UserMapper;
 import com.acShop.pojo.PageBean;
@@ -20,6 +21,8 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private ShopMapper shopMapper;
+    @Autowired
+    private ProductMapper productMapper;
 
     @Override
     public PageBean page(Integer page, Integer pageSize, String username,  String role) {
@@ -32,6 +35,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(List<Integer> ids) {
+        List<Integer> shopIds = shopMapper.getIdsByOwnerIds(ids);
+        if (!shopIds.isEmpty()) {
+            productMapper.deleteByShopIds(shopIds);
+        }
         shopMapper.deleteByOwnerIds(ids);
         userMapper.delete(ids);
     }
